@@ -1,4 +1,6 @@
-let books = [{ id: 1, title: "Introduction to Algorithms", author: "Thomas H. Cormen", category: "DSA", totalCopies: 5, availableCopies: 5 },
+// ===== BOOKS (PASTE YOUR 200 HERE) =====
+let defaultBooks = [
+  { id: 1, title: "Introduction to Algorithms", author: "Thomas H. Cormen", category: "DSA", totalCopies: 5, availableCopies: 5 },
   { id: 2, title: "Algorithms Unlocked", author: "Thomas H. Cormen", category: "DSA", totalCopies: 3, availableCopies: 3 },
   { id: 3, title: "The Algorithm Design Manual", author: "Steven Skiena", category: "DSA", totalCopies: 4, availableCopies: 4 },
   { id: 4, title: "Grokking Algorithms", author: "Aditya Bhargava", category: "DSA", totalCopies: 5, availableCopies: 5 },
@@ -197,166 +199,130 @@ let books = [{ id: 1, title: "Introduction to Algorithms", author: "Thomas H. Co
   { id: 197, title: "Discrete Mathematics and Its Applications", author: "Kenneth Rosen", category: "Mathematics", totalCopies: 4, availableCopies: 4 },
   { id: 198, title: "Graph Algorithms", author: "Shimon Even", category: "DSA", totalCopies: 2, availableCopies: 2 },
   { id: 199, title: "Convex Optimization", author: "Stephen Boyd", category: "Mathematics", totalCopies: 2, availableCopies: 2 },
-  { id: 200, title: "Introduction to Statistical Learning", author: "Gareth James", category: "ML", totalCopies: 4, availableCopies: 4 },];
+  { id: 200, title: "Introduction to Statistical Learning", author: "Gareth James", category: "ML", totalCopies: 4, availableCopies: 4 },
+];
 
+let books = JSON.parse(localStorage.getItem("books")) || defaultBooks;
 let borrowed = JSON.parse(localStorage.getItem("borrowed")) || [];
 let history = JSON.parse(localStorage.getItem("history")) || [];
 
 window.onload = () => {
-    renderBooks();
-    renderBorrowed();
-    renderHistory();
-    updateDropdown();
-    updateChart();
+if(availableTable) renderBooks();
+if(borrowedTable) renderBorrowed();
+if(historyTable) renderHistory();
+if(bookSelect) updateDropdown();
 };
 
-document.getElementById("searchBook").addEventListener("input", function () {
-    let value = this.value.toLowerCase();
-    let filtered = books.filter(b => b.title.toLowerCase().includes(value));
-    updateDropdown(filtered);
+// ===== SEARCH DROPDOWN =====
+function filterBooks(){
+let val=searchBook.value.toLowerCase();
+let list=books.filter(b=>b.title.toLowerCase().includes(val));
+
+bookSelect.innerHTML="";
+list.forEach(b=>{
+if(b.availableCopies>0){
+bookSelect.innerHTML+=`<option value="${b.id}">
+${b.title} (${b.availableCopies})
+</option>`;
+}});
+}
+
+// ===== BORROW =====
+function borrowBook(){
+let name=facultyName.value;
+let mobile=document.getElementById("mobile").value;
+let id=bookSelect.value;
+
+let book=books.find(b=>b.id==id);
+book.availableCopies--;
+
+let d=new Date();
+d.setDate(d.getDate()+28);
+
+let rec={id:Date.now(),name,mobile,book:book.title,returnDate:d.toDateString()};
+
+borrowed.push(rec);
+history.push(rec);
+
+save();
+renderBooks();
+renderBorrowed();
+renderHistory();
+}
+
+// ===== RETURN =====
+function returnBook(id){
+let rec=borrowed.find(b=>b.id===id);
+let book=books.find(b=>b.title===rec.book);
+
+book.availableCopies++;
+borrowed=borrowed.filter(b=>b.id!==id);
+
+save();
+renderBorrowed();
+renderBooks();
+}
+
+// ===== SAVE =====
+function save(){
+localStorage.setItem("books",JSON.stringify(books));
+localStorage.setItem("borrowed",JSON.stringify(borrowed));
+localStorage.setItem("history",JSON.stringify(history));
+}
+
+// ===== TABLES =====
+function renderBooks(){
+availableTable.innerHTML=`<tr><th>Title</th><th>Author</th><th>Category</th><th>Available</th></tr>`;
+books.forEach(b=>{
+availableTable.innerHTML+=`<tr>
+<td>${b.title}</td>
+<td>${b.author}</td>
+<td>${b.category}</td>
+<td>${b.availableCopies}/${b.totalCopies}</td>
+</tr>`;
 });
-
-function updateDropdown(filteredBooks = books) {
-    let select = document.getElementById("bookSelect");
-    select.innerHTML = "";
-
-    filteredBooks.forEach(book => {
-        if (book.availableCopies > 0) {
-            select.innerHTML += `<option value="${book.id}">
-            ${book.title} (${book.availableCopies})
-            </option>`;
-        }
-    });
 }
 
-function borrowBook() {
-    let name = facultyName.value;
-    let mobile = mobile.value;
-    let bookId = bookSelect.value;
-
-    let book = books.find(b => b.id == bookId);
-
-    let returnDate = new Date();
-    returnDate.setDate(returnDate.getDate() + 28);
-
-    book.availableCopies--;
-
-    let record = {
-        id: Date.now(),
-        name,
-        mobile,
-        book: book.title,
-        returnDate: returnDate.toDateString()
-    };
-
-    borrowed.push(record);
-    history.push(record);
-
-    save();
-
-    generatePDF(name, book.title, returnDate);
-
-    renderBooks();
-    renderBorrowed();
-    renderHistory();
-    updateChart();
+function renderBorrowed(){
+borrowedTable.innerHTML=`<tr><th>Name</th><th>Book</th><th>Return</th><th>Action</th></tr>`;
+borrowed.forEach(b=>{
+borrowedTable.innerHTML+=`<tr>
+<td>${b.name}</td>
+<td>${b.book}</td>
+<td>${b.returnDate}</td>
+<td><button onclick="returnBook(${b.id})">Return</button></td>
+</tr>`;
+});
 }
 
-function returnBook(id) {
-    let record = borrowed.find(b => b.id === id);
-    let book = books.find(b => b.title === record.book);
-
-    book.availableCopies++;
-    borrowed = borrowed.filter(b => b.id !== id);
-
-    save();
-
-    renderBooks();
-    renderBorrowed();
-    updateChart();
+function renderHistory(){
+historyTable.innerHTML=`<tr><th>Name</th><th>Book</th><th>Date</th></tr>`;
+history.forEach(h=>{
+historyTable.innerHTML+=`<tr>
+<td>${h.name}</td>
+<td>${h.book}</td>
+<td>${h.returnDate}</td>
+</tr>`;
+});
 }
 
-function save() {
-    localStorage.setItem("borrowed", JSON.stringify(borrowed));
-    localStorage.setItem("history", JSON.stringify(history));
+// ===== SEARCH TABLE =====
+function searchBooks(){
+let val=searchBooksTable.value.toLowerCase();
+let list=books.filter(b=>b.title.toLowerCase().includes(val));
+
+availableTable.innerHTML=`<tr><th>Title</th><th>Author</th><th>Category</th><th>Available</th></tr>`;
+list.forEach(b=>{
+availableTable.innerHTML+=`<tr>
+<td>${b.title}</td>
+<td>${b.author}</td>
+<td>${b.category}</td>
+<td>${b.availableCopies}/${b.totalCopies}</td>
+</tr>`;
+});
 }
 
-function renderBooks() {
-    let table = availableTable;
-
-    table.innerHTML = `<tr><th>Title</th><th>Author</th><th>Category</th><th>Available</th></tr>`;
-
-    books.forEach(b => {
-        table.innerHTML += `<tr>
-        <td>${b.title}</td>
-        <td>${b.author}</td>
-        <td>${b.category}</td>
-        <td>${b.availableCopies}/${b.totalCopies}</td>
-        </tr>`;
-    });
-}
-
-function renderBorrowed() {
-    borrowedTable.innerHTML = `<tr><th>Name</th><th>Book</th><th>Return</th><th>Action</th></tr>`;
-
-    borrowed.forEach(b => {
-        borrowedTable.innerHTML += `<tr>
-        <td>${b.name}</td>
-        <td>${b.book}</td>
-        <td>${b.returnDate}</td>
-        <td><button onclick="returnBook(${b.id})">Return</button></td>
-        </tr>`;
-    });
-}
-
-function renderHistory() {
-    historyTable.innerHTML = `<tr><th>Name</th><th>Book</th><th>Date</th></tr>`;
-
-    history.forEach(h => {
-        historyTable.innerHTML += `<tr>
-        <td>${h.name}</td>
-        <td>${h.book}</td>
-        <td>${h.returnDate}</td>
-        </tr>`;
-    });
-}
-
-function searchBooks() {
-    let val = searchBooksTable.value.toLowerCase();
-
-    let filtered = books.filter(b =>
-        b.title.toLowerCase().includes(val) ||
-        b.author.toLowerCase().includes(val)
-    );
-
-    availableTable.innerHTML = `<tr><th>Title</th><th>Author</th><th>Category</th><th>Available</th></tr>`;
-
-    filtered.forEach(b => {
-        availableTable.innerHTML += `<tr>
-        <td>${b.title}</td>
-        <td>${b.author}</td>
-        <td>${b.category}</td>
-        <td>${b.availableCopies}/${b.totalCopies}</td>
-        </tr>`;
-    });
-}
-
-function updateChart() {
-    new Chart(document.getElementById("chart"), {
-        type: "bar",
-        data: {
-            labels: ["Total Books", "Borrowed"],
-            datasets: [{
-                data: [books.length, borrowed.length]
-            }]
-        }
-    });
-}
-
-function generatePDF(name, book, date) {
-    let blob = new Blob([`Name:${name}\nBook:${book}\nReturn:${date}`], { type: "application/pdf" });
-    let link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "receipt.pdf";
-    link.click();
+// ===== LOGOUT =====
+function logout(){
+window.location="index.html";
 }
