@@ -1,26 +1,84 @@
-body{font-family:Inter;margin:0;background:#f1f5f9}
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+}
 
 /* LOGIN */
-.login-body{display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#4f46e5,#9333ea)}
-.login-box{background:white;padding:30px;border-radius:15px;width:320px;text-align:center}
+.login-body {
+    background: linear-gradient(135deg, #4f46e5, #9333ea);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
-/* LOGO */
-.logo-text h1{color:red;margin:0}
-.logo-text h5{font-size:12px}
-.logo-text p{background:#1d4ed8;color:white;font-size:10px;padding:5px}
+.login-box {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 320px;
+    text-align: center;
+}
 
-/* NAV */
-.navbar{background:#111827;color:white;padding:15px;display:flex;justify-content:space-between}
-.navbar a{color:white;margin:0 10px;text-decoration:none}
+/* LOGO TEXT */
+.logo-text h1 {
+    color: red;
+    font-weight: 800;
+    margin: 0;
+}
 
-/* CARD */
-.container{padding:20px}
-.card{background:white;padding:20px;border-radius:10px;margin-bottom:20px}
+.logo-text h5 {
+    font-size: 12px;
+    margin: 5px 0;
+}
 
-/* FORM */
-input,select{padding:10px;margin:5px;border-radius:8px}
-button{padding:10px;background:#4f46e5;color:white;border:none;border-radius:8px}
+.logo-text p {
+    background: #1d4ed8;
+    color: white;
+    font-size: 10px;
+    padding: 5px;
+    border-radius: 5px;
+}
 
-/* TABLE */
-table{width:100%}
-th{background:black;color:white}
+/* DASHBOARD */
+.navbar {
+    background: #111827;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.container {
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+input, select {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 8px;
+}
+
+button {
+    padding: 10px;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+}
+
+table {
+    width: 100%;
+}
+
+th {
+    background: black;
+    color: white;
+}
