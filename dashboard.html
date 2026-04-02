@@ -1,110 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ACSE Library Dashboard</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f1f5f9;
-        }
-
-        .navbar {
-            background: #111827;
-            color: white;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .container {
-            padding: 20px;
-        }
-
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        input, select {
-            padding: 10px;
-            margin: 5px;
-            border-radius: 8px;
-        }
-
-        button {
-            padding: 10px;
-            background: #4f46e5;
-            color: white;
-            border: none;
-            border-radius: 8px;
-        }
-
-        table {
-            width: 100%;
-        }
-
-        th {
-            background: black;
-            color: white;
-        }
-    </style>
+<title>Dashboard</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="navbar">
-    <h3>📚 ACSE Library Dashboard</h3>
-    <div>
-        <button onclick="history.back()">⬅</button>
-        <button onclick="history.forward()">➡</button>
-    </div>
+<h3>📚 ACSE Library</h3>
+<div>
+<a href="books.html">Books</a>
+<a href="borrowed.html">Borrowed</a>
+<a href="history.html">History</a>
+<button onclick="logout()">Logout</button>
+</div>
 </div>
 
 <div class="container">
 
 <div class="card">
-<h4>Borrow Book</h4>
+<h3>Borrow Book</h3>
 
 <input id="facultyName" placeholder="Faculty Name">
-<input id="mobile" placeholder="Mobile Number">
-<input id="searchBook" placeholder="Search Book">
-<select id="bookSelect"></select>
+<input id="mobile" placeholder="Mobile">
+
+<input id="searchBook" placeholder="Search Book..." onkeyup="filterBooks()">
+
+<select id="bookSelect" size="6"></select>
 
 <button onclick="borrowBook()">Borrow</button>
-</div>
-
-<div class="card">
-<h4>Books Info</h4>
-
-<input id="searchBooksTable" onkeyup="searchBooks()" placeholder="Search Books...">
-
-<table id="availableTable"></table>
-</div>
-
-<div class="card">
-<h4>Borrowed Books</h4>
-<table id="borrowedTable"></table>
-</div>
-
-<div class="card">
-<h4>History</h4>
-<table id="historyTable"></table>
-</div>
-
-<div class="card">
-<h4>Analytics</h4>
-<canvas id="chart"></canvas>
 </div>
 
 </div>
 
 <script src="script.js"></script>
-
 </body>
 </html>
